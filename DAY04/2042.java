@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-// Indexed Tree 활용
+// Indexed Tree 활용 : 너어무 어려웠다...
 
 class Main {
     static long[] tree;
