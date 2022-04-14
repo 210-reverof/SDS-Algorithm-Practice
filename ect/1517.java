@@ -43,6 +43,3 @@ public class Q1517 {
         System.out.println(ans);
     }
 }
-
-
-출처: https://dundung.tistory.com/50 [DunDung]
