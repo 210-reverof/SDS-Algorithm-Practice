@@ -5,16 +5,13 @@ class Solution {
         String[] answer = new String[files.length];
         List<File> fs = new ArrayList<>();
         
-        for (String f : files) {
+        for (String f : files)
             fs.add(new File(f));
-        }
         
         Collections.sort(fs);
         
-        for (int i = 0; i < files.length; i++) {
-            // System.out.print(fs.get(i).number + " ");
+        for (int i = 0; i < files.length; i++)
             answer[i] = fs.get(i).name;
-        }
         
         return answer;
     }
@@ -25,18 +22,11 @@ class Solution {
         
         public File(String name) {
             this.name = name;
-            
-            int numberStartIdx = name.replaceAll("[0-9]", "*").indexOf("*");
-            this.head = name.substring(0, numberStartIdx).toUpperCase();
-            
-            String numStr = name.substring(numberStartIdx, 
-                        Math.min(numberStartIdx + 5, name.length())).replaceAll("[^0-9]", "");
+            this.head = name.split("[0-9]")[0].toUpperCase();
+            String numStr = name.substring(this.head.length(), Math.min(this.head.length() + 5, name.length()));
+            numStr = numStr.split("[^0-9]")[0];
             this.number = Integer.parseInt(numStr);
-        }
-        
-        @Override
-        public String toString() {
-            return this.name;
+            
         }
         
         @Override
