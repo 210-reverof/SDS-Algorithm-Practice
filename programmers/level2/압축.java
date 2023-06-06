@@ -24,6 +24,8 @@ class Solution {
             end++;
         }
         
+        ans.add(map.get(msg.substring(start, end-1)));
+        
         return ans;
     }
 }
