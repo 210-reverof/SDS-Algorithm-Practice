@@ -76,4 +76,14 @@ class Solution {
 
         for (int i = 0; i < M; i++) {
             if (sel[i]) {
-    
+                int currVal = board[currStartR][currStartC + i];
+                cnt += currVal;
+                valSum += currVal * currVal;
+            }
+        }
+
+        return cnt > C ? 0 : valSum;
+    }
+}
+ 71 changes: 71 additions & 0 deletions71  
+210
