@@ -5,7 +5,7 @@ class Solution {
         int[] answer = new int[n];
 
         List<Integer> nums = new ArrayList<>();
-        int div = 1;
+        long div = 1;
 
         for (int i = 1; i <= n; i++) {
             nums.add(i);
