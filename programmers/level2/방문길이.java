@@ -2,11 +2,13 @@ import java.util.*;
 
 class Solution {
     Set<Integer> visited = new HashSet<>();
+    int[][] ds = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
     public int solution(String dirs) {
         int r = 0, c = 0;
         for (char d : dirs.toCharArray()) {
-            int nr = r + getNextR(d);
-            int nc = c + getNextC(d);
+            int di = d == 'D' ? 0 : d == 'U' ? 1 : d == 'R' ? 2 : 3; 
+            int nr = r + ds[di][0];
+            int nc = c + ds[di][1];
             
             if (nr < -5 || nr > 5 || nc < -5 || nc > 5) continue;
             
@@ -15,22 +17,7 @@ class Solution {
             c = nc;
         }
         
-        System.out.println(visited);
         return visited.size();
-    }
-    
-    private int getNextR(char c) {
-        if (c == 'U') return 1;
-        if (c == 'D') return -1;
-        if (c == 'R') return 0;
-        return 0;
-    }
-    
-    private int getNextC(char c) {
-        if (c == 'U') return 0;
-        if (c == 'D') return 0;
-        if (c == 'R') return 1;
-        return -1;
     }
     
     private int getIndex(int r, int c, int nr, int nc) {
