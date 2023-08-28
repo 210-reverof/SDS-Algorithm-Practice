@@ -1,20 +1,5 @@
-package level3;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-class Main {
-    static int N, M;
-    static int[] Group;
-
-    public static void main(String[] args) throws Exception {
-        String lines[] = {"2016-09-15 01:00:04.002 2.0s",
-"2016-09-15 01:00:07.000 2s"};
-
-        Solution sol = new Solution();
-        System.out.println("result : " + sol.solution(lines));
-    }
-}
 
 class Solution {
     public int solution(String[] lines) throws Exception {
