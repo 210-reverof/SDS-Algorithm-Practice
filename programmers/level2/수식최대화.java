@@ -1,18 +1,4 @@
-package level2;
-
 import java.util.*;
-
-class Main {
-    static int N, M;
-    static int[] Group;
-
-    public static void main(String[] args) throws Exception {
-        String s = "ababcdcdababcdcd";
-        Solution sol = new Solution();
-
-        System.out.println("result : " + sol.solution(s));
-    }
-}
 
 class Solution {
     public long solution(String expression) {
