@@ -1,38 +1,37 @@
-package level2;
-
 import java.util.*;
-import java.util.stream.Collectors;
-
-class Main {
-    public static void main(String[] args) throws Exception {
-        int k = 6;
-        int[] data = {1, 3, 2, 5, 4, 5, 2, 3};
-
-        Solution sol = new Solution();
-        System.out.println("result : " + sol.solution(k, data));
-    }
-}
 
 class Solution {
     public int solution(int k, int[] tangerine) {
         int answer = 0;
-        HashMap<Integer, Integer> box = new HashMap<>();
-        for (int i = 0; i < tangerine.length; i++) {
-            box.put(tangerine[i], box.getOrDefault(tangerine[i], 0) + 1);
+        
+        Map<Integer, Integer> countMap = new HashMap<>();
+        for (int n : tangerine) countMap.put(n, countMap.getOrDefault(n, 0) + 1);
+        
+        Queue<Tang> q = new PriorityQueue<>();
+        for (Integer key : countMap.keySet()) {
+            q.add(new Tang(key, countMap.get(key)));
         }
-
-        ArrayList<Integer> sizes = new ArrayList<>(box.values());
-        sizes.sort(((o1, o2) -> o2 - o1));
-
-        int count = 0;
-        for (int i = 0; i < sizes.size(); i++) {
-            count += sizes.get(i);
+        
+        while(!q.isEmpty()) {
+            if (k <= 0) break;
             answer++;
-            if(count >= k){
-                return answer;
-            }
+            k -= q.poll().count;            
         }
-
+        
         return answer;
     }
 }
+
+    class Tang implements Comparable<Tang> {
+        int num, count;
+        
+        public Tang(int num, int count) {
+            this.num = num;
+            this.count = count;
+        }
+        
+        @Override
+        public int compareTo(Tang t) {
+            return t.count - this.count;
+        } 
+    }
