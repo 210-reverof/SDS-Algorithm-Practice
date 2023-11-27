@@ -27,17 +27,12 @@ class Solution {
     
     private void find(int cnt, int p, int usedEnergy, int depth) {
         if (usedEnergy >= answer) return;
-        if (depth == len) {
-            answer = Math.min(answer, usedEnergy);
-            return;
-        }
-        
-        if (cnt > 0) {
+        if (depth < len && cnt > 0) {
             find(cnt-1, p, usedEnergy + energy[p][ms[depth]] , depth+1);
             return;
         }
         
-        if (used[0] + used[1] + used[2] == pickCnt) {
+        if (depth == len || used[0] + used[1] + used[2] == pickCnt) {
             answer = Math.min(answer, usedEnergy);
             return;
         }
