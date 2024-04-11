@@ -3,7 +3,7 @@ import java.io.*;
 
 public class Main {
     static int N, M, P, C, D, rudR, rudC;
-    static int[][] board, ds = {{-1,0}, {0,-1}, {1,0}, {0,1}};
+    static int[][] board, ds = {{1,0}, {0,-1}, {-1,0}, {0,1}};
     static int[][] rds = {{1,1}, {1,0}, {1,-1}, {0,1}, {0,-1}, {-1,1}, {-1,0}, {-1,-1}};
     static Queue<int[]> q = new LinkedList<>();
     static int[] santaScores;
@@ -39,8 +39,8 @@ public class Main {
         for (int i = 0; i < M; i++) {
             stuns = nextStuns;
             nextStuns = new HashSet<>();
-            moveRud();
             if (santas.keySet().size() == 0) break;
+            moveRud();
             for (int j = 1; j <= P; j++) {
                 if (santas.containsKey(j)) {
                     moveSanta(j);
@@ -50,22 +50,13 @@ public class Main {
             for (int n : santas.keySet()) {
                 santaScores[n]++;
             }
-
-            print();
         }
 
-        System.out.println(Arrays.toString(santaScores));                
-    }
-
-    private static void print() {
-        System.out.println(Arrays.toString(santaScores));
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                System.out.print(board[i][j] + "    ");
-            }
-            System.out.println();
+        String answer = "";
+        for (int i = 0; i < P; i++) {
+            answer += santaScores[i+1] + " ";
         }
-        System.out.println();
+        System.out.println(answer);                
     }
 
     private static void moveRud() {
@@ -84,32 +75,31 @@ public class Main {
     }
 
     private static int[] getNearSanta() {
-        boolean[][] visited = new boolean[N][N];
-        visited[rudR][rudC] = true;
-        q.add(new int[]{rudR, rudC});
-
-        while(!q.isEmpty()) {
-            int[] curr = q.poll();
-
-            for (int d = 0; d < 8; d++) {
-                int nr = curr[0] + rds[d][0];
-                int nc = curr[1] + rds[d][1];
-
-                if (nr < 0 || nr >= N || nc < 0 || nc >= N || visited[nr][nc]) continue;
-                if (board[nr][nc] != 0) {
-                    q.clear();
-                    return new int[]{nr, nc};
+        double min = Double.MAX_VALUE;
+        int[] minSanta = null;
+        for (int s : santas.keySet()) {
+            int[] curr = santas.get(s);
+            double currDis = Math.pow((curr[0] - rudR), 2) + Math.pow((curr[1] - rudC), 2);
+            
+            if (currDis < min) {
+                min = currDis;
+                minSanta = curr;
+            } else if (currDis == min) {
+                if (curr[0] > minSanta[0]) {
+                    min = currDis;
+                    minSanta = curr;
+                } else if (curr[0] == minSanta[0] && curr[1] > minSanta[1]) {
+                    minSanta = curr;
+                    min = currDis;
                 }
-                visited[nr][nc] = true;
-                q.add(new int[]{nr, nc});
             }
         }
 
-        return new int[]{-1, -1};
+        return minSanta;
     }
 
     private static void moveSanta(int santaNum) {
-       if (stuns.contains(santaNum)) return;
+       if (stuns.contains(santaNum) || nextStuns.contains(santaNum)) return;
        int[] curr = santas.get(santaNum);
        
        double dis = Math.pow((curr[0] - rudR), 2) + Math.pow((curr[1] - rudC), 2);
@@ -129,12 +119,13 @@ public class Main {
             if (currDis == 0.0) break;
         }
        }
-
+       
        if (minDis < dis) {
         int nr = curr[0] + ds[minD][0];
         int nc = curr[1] + ds[minD][1];
         if (board[nr][nc] == -1) {
             santaCrush(santaNum, ds[minD][0], ds[minD][1]);
+            nextStuns.add(santaNum);
             return;
         }
         
@@ -170,7 +161,6 @@ public class Main {
         int[] curr = santas.get(santaNum);
         int nr = curr[0] + (dr * -1 * (D-1));
         int nc = curr[1] + (dc * -1 * (D-1));
-        // System.out.println("------crush " + santaNum + " " + nr + "," + nc);
 
         if (nr < 0 || nr >= N || nc < 0 || nc >= N) {
             santas.remove(santaNum);
@@ -178,7 +168,7 @@ public class Main {
             return;
         }
 
-        if (board[nr][nc] > 0) {
+        if (!(nr == curr[0] && nc == curr[1]) && board[nr][nc] > 0) {
             react(curr[0], curr[1], dr*-1, dc*-1);
             return;
         }
