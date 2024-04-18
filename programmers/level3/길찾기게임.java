@@ -1,7 +1,6 @@
 import java.util.*;
 
 class Solution {
-    int[][] tree = new int[1000000][2];
     Queue<Node> nodes = new PriorityQueue<>(Collections.reverseOrder());
     int[][] answer;
     int len, ai = 0;
@@ -13,45 +12,44 @@ class Solution {
             nodes.add(new Node(i+1, nodeinfo[i][0], nodeinfo[i][1]));
         }
         
-        Node curr = nodes.poll();
-        tree[1][0] = curr.n;
-        tree[1][1] = curr.x;
+        Node root = nodes.poll();
         while (!nodes.isEmpty()) {
-            curr = nodes.poll();
-            makeTree(1, curr.n, curr.x);
+            makeTree(root, nodes.poll());
         }
         
-        preorder(1);
+        preorder(root);
         ai = 0;
-        postorder(1);
+        postorder(root);
         
         return answer;
     }
     
-    private void makeTree(int parentIdx, int currN, int currX) {
-        int nextIdx = currX < tree[parentIdx][1]? parentIdx * 2 : parentIdx * 2 + 1;
-        
-        if (tree[nextIdx][0] == 0) {
-            tree[nextIdx][0] = currN;
-            tree[nextIdx][1] = currX;
+    private void makeTree(Node parent, Node next) {
+        if (next.x < parent.x) {
+            if (parent.left == null) parent.left = next;
+            else makeTree(parent.left, next);
+            return;
         }
-        else makeTree(nextIdx, currN, currX);        
+        
+        if (parent.right == null) parent.right = next;
+        else makeTree(parent.right, next);
     }
     
-    private void preorder(int idx) {
-        if (idx <= 10000 && tree[idx][0] != 0) answer[0][ai++] = tree[idx][0];
-        if (idx*2 <= 10000 && tree[idx*2][0] != 0) preorder(idx*2);
-        if (idx*2 + 1 <= 10000 && tree[idx*2 + 1][0] != 0) preorder(idx*2 + 1);
+    private void preorder(Node curr) {
+        answer[0][ai++] = curr.n;
+        if (curr.left != null) preorder(curr.left);
+        if (curr.right != null) preorder(curr.right);  
     }
     
-    private void postorder(int idx) {
-        if (idx*2 <= 10000 && tree[idx*2][0] != 0) postorder(idx*2);
-        if (idx*2 + 1 <= 10000 && tree[idx*2 + 1][0] != 0) postorder(idx*2 + 1);
-        if (idx <= 10000 && tree[idx][0] != 0) answer[1][ai++] = tree[idx][0];
+    private void postorder(Node curr) {
+        if (curr.left != null) postorder(curr.left);
+        if (curr.right != null) postorder(curr.right);
+        answer[1][ai++] = curr.n;
     }
 
     class Node implements Comparable<Node> {
-        int n, x, y;
+        int n, x, y; 
+        Node left, right;
         
         public Node(int n, int x, int y) {
             this.n = n;
