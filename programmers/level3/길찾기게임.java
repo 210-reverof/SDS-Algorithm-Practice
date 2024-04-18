@@ -1,7 +1,7 @@
 import java.util.*;
 
 class Solution {
-    int[][] tree = new int[10001][4];    // n, left, x, right
+    int[][] tree = new int[1000000][2];
     Queue<Node> nodes = new PriorityQueue<>(Collections.reverseOrder());
     int[][] answer;
     int len, ai = 0;
@@ -13,8 +13,14 @@ class Solution {
             nodes.add(new Node(i+1, nodeinfo[i][0], nodeinfo[i][1]));
         }
         
-        makeTree();
-    
+        Node curr = nodes.poll();
+        tree[1][0] = curr.n;
+        tree[1][1] = curr.x;
+        while (!nodes.isEmpty()) {
+            curr = nodes.poll();
+            makeTree(1, curr.n, curr.x);
+        }
+        
         preorder(1);
         ai = 0;
         postorder(1);
@@ -22,42 +28,18 @@ class Solution {
         return answer;
     }
     
-    private void makeTree() {
-        Node node = nodes.poll();
-        tree[1] = new int[]{node.n, 0, node.x, 100000};
-        int prevY = node.y;
-        int level = 1;
+    private void makeTree(int parentIdx, int currN, int currX) {
+        int nextIdx = currX < tree[parentIdx][1]? parentIdx * 2 : parentIdx * 2 + 1;
         
-        while (!nodes.isEmpty()) {
-            node = nodes.poll();
-            if (node.y != prevY) {
-                prevY = node.y;
-                level++;
-            }
-            
-            int tmpIdx = (int) Math.pow(2, level-2);
-            while(tmpIdx < Math.pow(2, level-1)) {
-                int tmpLeft = tree[tmpIdx][1];
-                int tmpX = tree[tmpIdx][2];
-                int tmpRight = tree[tmpIdx][3];
-                
-                if (tmpLeft <= node.x && node.x <= tmpRight) {
-                    if (node.x <= tmpX) {
-                        tree[tmpIdx*2] = new int[]{node.n, tmpLeft, node.x, tmpX};
-                        break;
-                    }
-                    
-                    tree[tmpIdx*2+1] = new int[]{node.n, tmpX, node.x, tmpRight};
-                    break;
-                }
-                
-                tmpIdx++;
-            }
+        if (tree[nextIdx][0] == 0) {
+            tree[nextIdx][0] = currN;
+            tree[nextIdx][1] = currX;
         }
+        else makeTree(nextIdx, currN, currX);        
     }
     
     private void preorder(int idx) {
-        answer[0][ai++] = tree[idx][0];
+        if (idx <= 10000 && tree[idx][0] != 0) answer[0][ai++] = tree[idx][0];
         if (idx*2 <= 10000 && tree[idx*2][0] != 0) preorder(idx*2);
         if (idx*2 + 1 <= 10000 && tree[idx*2 + 1][0] != 0) preorder(idx*2 + 1);
     }
@@ -65,7 +47,7 @@ class Solution {
     private void postorder(int idx) {
         if (idx*2 <= 10000 && tree[idx*2][0] != 0) postorder(idx*2);
         if (idx*2 + 1 <= 10000 && tree[idx*2 + 1][0] != 0) postorder(idx*2 + 1);
-        answer[1][ai++] = tree[idx][0];
+        if (idx <= 10000 && tree[idx][0] != 0) answer[1][ai++] = tree[idx][0];
     }
 
     class Node implements Comparable<Node> {
@@ -81,6 +63,11 @@ class Solution {
         public int compareTo(Node node) {
             if (this.y != node.y) return this.y - node.y;
             return this.x - node.x;
+        }
+        
+        @Override
+        public String toString() {
+            return n + " (" + x + ", " + y + ")";
         }
     }
 }
